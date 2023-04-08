@@ -4,6 +4,14 @@ import org.joml.Vector3f;
 
 public class ColorUtil
 {
+	public static int packAbgr(int a, int b, int g, int r)
+	{
+		var rgb = (a & 0xFF);
+		rgb = (rgb << 8) | (b & 0xFF);
+		rgb = (rgb << 8) | (g & 0xFF);
+		rgb = (rgb << 8) | (r & 0xFF);
+		return rgb;
+	}
 	public static int packRgb(int r, int g, int b)
 	{
 		var rgb = (r & 0xFF);
@@ -87,6 +95,26 @@ public class ColorUtil
 	public static String toResourceId(int color)
 	{
 		return String.format("%06x", color & 0xFFFFFF);
+	}
+
+	public static int abgrGetA(int color)
+	{
+		return (color & 0xFF000000) >> 24;
+	}
+
+	public static int abgrGetB(int color)
+	{
+		return (color & 0xFF0000) >> 16;
+	}
+
+	public static int abgrGetG(int color)
+	{
+		return (color & 0xFF00) >> 8;
+	}
+
+	public static int abgrGetR(int color)
+	{
+		return color & 0xFF;
 	}
 
 	public static float argbGetAf(int color)

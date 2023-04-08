@@ -1,48 +1,48 @@
 package com.parzivail.util.client;
 
 import com.parzivail.util.data.TintedIdentifier;
+import com.parzivail.util.math.ColorUtil;
 import com.parzivail.util.math.MathUtil;
-import net.minecraft.util.math.ColorHelper;
 import net.minecraft.util.math.MathHelper;
 
 public class NativeImageUtil
 {
 	public static int blendColorsOnSrcAlpha(int dest, int src, int tint, TintedIdentifier.Mode tintMode)
 	{
-		var destA = ColorHelper.Abgr.getAlpha(dest) / 255f;
-		var destR = ColorHelper.Abgr.getRed(dest);
-		var destG = ColorHelper.Abgr.getGreen(dest);
-		var destB = ColorHelper.Abgr.getBlue(dest);
+		var destA = ColorUtil.abgrGetA(dest) / 255f;
+		var destR = ColorUtil.abgrGetR(dest);
+		var destG = ColorUtil.abgrGetG(dest);
+		var destB = ColorUtil.abgrGetB(dest);
 
 		src = tint(src, tint, tintMode);
 
-		var srcA = ColorHelper.Abgr.getAlpha(src) / 255f;
-		var srcR = ColorHelper.Abgr.getRed(src);
-		var srcG = ColorHelper.Abgr.getGreen(src);
-		var srcB = ColorHelper.Abgr.getBlue(src);
+		var srcA = ColorUtil.abgrGetA(src) / 255f;
+		var srcR = ColorUtil.abgrGetR(src);
+		var srcG = ColorUtil.abgrGetG(src);
+		var srcB = ColorUtil.abgrGetB(src);
 
 		var a = MathUtil.clamp((int)((destA + srcA) * 255f), 0, 255);
 		var r = MathUtil.clamp((int)((1 - srcA) * destR + srcA * srcR), 0, 255);
 		var g = MathUtil.clamp((int)((1 - srcA) * destG + srcA * srcG), 0, 255);
 		var b = MathUtil.clamp((int)((1 - srcA) * destB + srcA * srcB), 0, 255);
 
-		return ColorHelper.Abgr.getAbgr(a, b, g, r);
+		return ColorUtil.packAbgr(a, b, g, r);
 	}
 
 	public static int tint(int src, int tint, TintedIdentifier.Mode tintMode)
 	{
-		var srcA = ColorHelper.Abgr.getAlpha(src);
-		var srcR = ColorHelper.Abgr.getRed(src);
-		var srcG = ColorHelper.Abgr.getGreen(src);
-		var srcB = ColorHelper.Abgr.getBlue(src);
+		var srcA = ColorUtil.abgrGetA(src);
+		var srcR = ColorUtil.abgrGetR(src);
+		var srcG = ColorUtil.abgrGetG(src);
+		var srcB = ColorUtil.abgrGetB(src);
 
-		var tintA = ColorHelper.Abgr.getAlpha(tint);
+		var tintA = ColorUtil.abgrGetA(tint);
 		if (tintA == 0)
 			tintA = 255;
 
-		var tintR = ColorHelper.Abgr.getRed(tint);
-		var tintG = ColorHelper.Abgr.getGreen(tint);
-		var tintB = ColorHelper.Abgr.getBlue(tint);
+		var tintR = ColorUtil.abgrGetR(tint);
+		var tintG = ColorUtil.abgrGetG(tint);
+		var tintB = ColorUtil.abgrGetB(tint);
 
 		switch (tintMode)
 		{
@@ -75,11 +75,11 @@ public class NativeImageUtil
 			}
 		}
 
-		return ColorHelper.Abgr.getAbgr(srcA, srcB, srcG, srcR);
+		return ColorUtil.packAbgr(srcA, srcB, srcG, srcR);
 	}
 
 	public static int argbToAbgr(int value)
 	{
-		return ColorHelper.Abgr.getAbgr((value >>> 24) & 0xFF, (value) & 0xFF, (value >>> 8) & 0xFF, (value >>> 16) & 0xFF);
+		return ColorUtil.packAbgr((value >>> 24) & 0xFF, (value) & 0xFF, (value >>> 8) & 0xFF, (value >>> 16) & 0xFF);
 	}
 }
