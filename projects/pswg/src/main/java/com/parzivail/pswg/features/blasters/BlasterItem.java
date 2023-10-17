@@ -656,10 +656,6 @@ public class BlasterItem extends Item implements ILeftClickConsumer, ICustomVisu
 		return bd.stackWithAttachment(attachmentBitmask, DAMAGE_RANGE_MAP);
 	}
 
-	public static float getMaxAmmoMultiplyer(BlasterDescriptor discripter, int attachmentBitmask){
-		return discripter.stackWithAttachment(attachmentBitmask,MAX_AMMO_MAP);
-	}
-
 	public static float getShotTimerMultiplier(BlasterDescriptor bd, int attachmentBitmask)
 	{
 		return bd.stackWithAttachment(attachmentBitmask, RATE_MAP);
@@ -770,6 +766,8 @@ public class BlasterItem extends Item implements ILeftClickConsumer, ICustomVisu
 			tooltip.add(TooltipUtil.note(Text.translatable(I18N_TOOLTIP_BLASTER_STATS_SPREAD, bd.spread.horizontal, bd.spread.vertical)));
 			tooltip.add(TooltipUtil.note(Text.translatable(I18N_TOOLTIP_BLASTER_STATS_DAMAGE, getDamage(bd, bt))));
 			tooltip.add(TooltipUtil.note(Text.translatable(I18N_TOOLTIP_BLASTER_STATS_RANGE, getRange(bd, bt))));
+
+			// ideally this tool tip updates as the blaster fires. I haven't tested this.
 			tooltip.add(TooltipUtil.note(Text.translatable(I18N_TOOLTIP_BLASTER_STATS_AMMO_LEFT, getAmmoLeft(bd,bt)) ));
 
 		}
@@ -782,7 +780,7 @@ public class BlasterItem extends Item implements ILeftClickConsumer, ICustomVisu
 
 	private String getAmmoLeft(BlasterDescriptor discripter, BlasterTag tag){
 		// get the modified max ammo for the blaster.
-		int MaxAmmo = Math.round(discripter.magazineSize * getMaxAmmoMultiplyer(discripter,tag.attachmentBitmask));
+		int MaxAmmo = Math.round(discripter.magazineSize * getMagazineSizeMultiplier(discripter,tag.attachmentBitmask));
 
 		return tag.shotsRemaining + "/" + MaxAmmo;
 
