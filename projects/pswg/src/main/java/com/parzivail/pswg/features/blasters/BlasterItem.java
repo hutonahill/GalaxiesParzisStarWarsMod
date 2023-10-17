@@ -71,6 +71,8 @@ public class BlasterItem extends Item implements ILeftClickConsumer, ICustomVisu
 	@TarkinLang
 	public static final String I18N_TOOLTIP_BLASTER_STATS_RANGE = Resources.tooltip("blaster.stats.range");
 	@TarkinLang
+	public static final String I18N_TOOLTIP_BLASTER_STATS_AMMO_LEFT = Resources.tooltip("blaster.stats.ammo_left");
+	@TarkinLang
 	public static final String I18N_MESSAGE_MODE_CHANGED = Resources.msg("blaster_mode_changed");
 
 	public static final String SOCKET_ID_BARREL_END = "blaster_barrel_end";
@@ -95,6 +97,10 @@ public class BlasterItem extends Item implements ILeftClickConsumer, ICustomVisu
 
 	private static final HashMap<BlasterAttachmentFunction, Float> DAMAGE_RANGE_MAP = Util.make(new HashMap<>(), (h) -> {
 		h.put(BlasterAttachmentFunction.INCREASE_DAMAGE_RANGE, 1.5f);
+	});
+
+	private static final HashMap<BlasterAttachmentFunction, Float> MAX_AMMO_MAP = Util.make(new HashMap<>(), (h) -> {
+		h.put(BlasterAttachmentFunction.INCREASE_MAGAZINE_SIZE, 1.5f);
 	});
 
 	private static final HashMap<BlasterAttachmentFunction, Float> RATE_MAP = Util.make(new HashMap<>(), (h) -> {
@@ -650,6 +656,10 @@ public class BlasterItem extends Item implements ILeftClickConsumer, ICustomVisu
 		return bd.stackWithAttachment(attachmentBitmask, DAMAGE_RANGE_MAP);
 	}
 
+	public static float getMaxAmmoMultiplyer(BlasterDescriptor discripter, int attachmentBitmask){
+		return discripter.stackWithAttachment(attachmentBitmask,MAX_AMMO_MAP);
+	}
+
 	public static float getShotTimerMultiplier(BlasterDescriptor bd, int attachmentBitmask)
 	{
 		return bd.stackWithAttachment(attachmentBitmask, RATE_MAP);
@@ -760,12 +770,23 @@ public class BlasterItem extends Item implements ILeftClickConsumer, ICustomVisu
 			tooltip.add(TooltipUtil.note(Text.translatable(I18N_TOOLTIP_BLASTER_STATS_SPREAD, bd.spread.horizontal, bd.spread.vertical)));
 			tooltip.add(TooltipUtil.note(Text.translatable(I18N_TOOLTIP_BLASTER_STATS_DAMAGE, getDamage(bd, bt))));
 			tooltip.add(TooltipUtil.note(Text.translatable(I18N_TOOLTIP_BLASTER_STATS_RANGE, getRange(bd, bt))));
+			tooltip.add(TooltipUtil.note(Text.translatable(I18N_TOOLTIP_BLASTER_STATS_AMMO_LEFT, getAmmoLeft(bd,bt)) ));
+
 		}
 	}
 
 	private float getRange(BlasterDescriptor bd, BlasterTag bt)
 	{
 		return bd.range * getRangeMultiplier(bd, bt.attachmentBitmask);
+	}
+
+	private String getAmmoLeft(BlasterDescriptor discripter, BlasterTag tag){
+		// get the modified max ammo for the blaster.
+		int MaxAmmo = Math.round(discripter.magazineSize * getMaxAmmoMultiplyer(discripter,tag.attachmentBitmask));
+
+		return tag.shotsRemaining + "/" + MaxAmmo;
+
+
 	}
 
 	private float getDamage(BlasterDescriptor bd, BlasterTag bt)
